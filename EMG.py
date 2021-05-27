@@ -50,28 +50,17 @@ pd.Series(y_pred).plot(color='black', ax=ax, figsize=(12, 10))
 Y1 = np.delete(Y, 0)
 Y2 = np.delete(Y1, 0)
 noise = Y2 - y_pred
-Psignal = y_pred.var()
-Pnoise = noise.var()
-print("\nSignal to noise ratio for y_pred : ", 10 * np.log10(Psignal / Pnoise))
 
-print("SNR for Autoregressive : ",signaltonoiseratio(Y2,y_pred))
-
+print("\nSNR for Autoregressive : ",signaltonoiseratio(Y2,y_pred))
 print("MSE for Autoregressive : ", meansquareerror(Y2,y_pred))
-
 print("Cross correlation for Autoregressive : ", crosscorelation(Y2,y_pred))
 
 # Savitzky-Golay
 X = data["t"].values
 y_pred2 = savgol_filter(Y, window_length=51, polyorder=3)
-noise2 = Y - y_pred2
-Psignal2 = y_pred2.var()
-Pnoise2 = noise2.var()
-print("\nSignal to noise ratio for Savitzky-Golay : ", 10 * np.log10(Psignal2 / Pnoise2))
 
-print("SNR for Savitzky-Golay : ",signaltonoiseratio(Y,y_pred2))
-
+print("\nSNR for Savitzky-Golay : ",signaltonoiseratio(Y,y_pred2))
 print("MSE for Savitzky-Golay : ", meansquareerror(Y,y_pred2))
-
 print("Cross correlation for Savitzky-Golay : ", crosscorelation(Y,y_pred2))
 
 # count peak to peak amplitude
@@ -89,17 +78,11 @@ Y_KNN = data.iloc[:, 1].values
 clf = KNeighborsRegressor(n_neighbors=50, weights='uniform')
 clf.fit(X_KNN, Y_KNN)
 y_pred3 = clf.predict(X_KNN)
-# calc noise
-noise3 = Y - y_pred3
-Psignal3 = y_pred3.var()
-Pnoise3 = noise3.var()
-print("\nSignal to noise ratio for KNN : ", 10 * np.log10(Psignal3 / Pnoise3))
 
-print("SNR for KNN Regressor : ",signaltonoiseratio(Y,y_pred3))
-
+print("\nSNR for KNN Regressor : ",signaltonoiseratio(Y,y_pred3))
 print("MSE for KNN Regressor : ", meansquareerror(Y,y_pred3))
-
 print("Cross correlation for KNN Regressor : ", crosscorelation(Y,y_pred3))
+
 #wavlet transform
 
 signal_emg = data["emg"].values
@@ -126,8 +109,6 @@ plt.plot( signal_emg, color="b", alpha=0.5 )
 plt.plot( y_denoised, color="r" )
 ax.set_xlim((0,len(y_denoised)))
 
-print("SNR for wavlet transform : ",signaltonoiseratio(signal_emg,y_denoised))
-
+print("\nSNR for wavlet transform : ",signaltonoiseratio(signal_emg,y_denoised))
 print("MSE for wavlet transform : ", meansquareerror(signal_emg,y_denoised))
-
 print("Cross correlation for wavlet transform : ", crosscorelation(signal_emg,y_denoised))
