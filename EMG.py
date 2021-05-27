@@ -32,16 +32,31 @@ Psignal = y_pred.var()
 Pnoise = noise.var()
 print("\nSignal to noise ratio for y_pred : ", 10 * np.log10(Psignal / Pnoise))
 
-# Savitzgy-Golay
+# Savitzky-Golay
 X = data["t"].values
 y_pred2 = savgol_filter(Y, window_length=51, polyorder=3)
 noise2 = Y - y_pred2
 Psignal2 = y_pred2.var()
 Pnoise2 = noise2.var()
-print("\nSignal to noise ratio for y_pred : ", 10 * np.log10(Psignal2 / Pnoise2))
+print("\nSignal to noise ratio for Savitzky-Golay : ", 10 * np.log10(Psignal2 / Pnoise2))
 
 # count peak to peak amplitude
 print(np.ptp(noise))
 print(np.ptp(y_pred2))
 
+# KNN Regressor model
 
+from sklearn.neighbors import KNeighborsRegressor
+
+# X is time in ms
+# Y is emg signal [mV]
+X_KNN = data.iloc[:, :-1].values
+Y_KNN = data.iloc[:, 1].values
+clf = KNeighborsRegressor(n_neighbors=50, weights='uniform')
+clf.fit(X_KNN, Y_KNN)
+y_pred3 = clf.predict(X_KNN)
+# calc noise
+noise3 = Y - y_pred3
+Psignal3 = y_pred3.var()
+Pnoise3 = noise3.var()
+print("\nSignal to noise ratio for KNN : ", 10 * np.log10(Psignal3 / Pnoise3))
