@@ -15,3 +15,18 @@ data['emg'] = pd.to_numeric(data['emg'], errors='coerce')
 data.dropna(inplace=True)
 data.isnull().sum().sum()
 
+# Autoregressive
+Y = data["emg"].values
+plot_pacf(Y, lags=10)
+model = AutoReg(Y, lags=(2), trend='t', seasonal=False, old_names=True)
+result = model.fit()
+y_pred = result.fittedvalues
+# plot filtered signal and its noisy version
+ax = pd.Series(Y).plot(color='lightgray')
+pd.Series(y_pred).plot(color='black', ax=ax, figsize=(12, 10))
+Y = np.delete(Y, 0)
+Y = np.delete(Y, 0)
+noise = Y - y_pred
+Psignal = y_pred.var()
+Pnoise = noise.var()
+print("\nsignaltonoise ratio for y_pred : ", 10 * np.log10(Psignal / Pnoise))
