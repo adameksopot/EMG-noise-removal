@@ -3,6 +3,7 @@ import pandas as pd
 from statsmodels.tsa.ar_model import AutoReg
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy.signal import savgol_filter
 
 # load EMG
 column = ['t', 'emg']
@@ -24,9 +25,23 @@ y_pred = result.fittedvalues
 # plot filtered signal and its noisy version
 ax = pd.Series(Y).plot(color='lightgray')
 pd.Series(y_pred).plot(color='black', ax=ax, figsize=(12, 10))
-Y = np.delete(Y, 0)
-Y = np.delete(Y, 0)
-noise = Y - y_pred
+Y1 = np.delete(Y, 0)
+Y2 = np.delete(Y1, 0)
+noise = Y2 - y_pred
 Psignal = y_pred.var()
 Pnoise = noise.var()
-print("\nsignaltonoise ratio for y_pred : ", 10 * np.log10(Psignal / Pnoise))
+print("\nSignal to noise ratio for y_pred : ", 10 * np.log10(Psignal / Pnoise))
+
+# Savitzgy-Golay
+X = data["t"].values
+y_pred2 = savgol_filter(Y, window_length=51, polyorder=3)
+noise2 = Y - y_pred2
+Psignal2 = y_pred2.var()
+Pnoise2 = noise2.var()
+print("\nSignal to noise ratio for y_pred : ", 10 * np.log10(Psignal2 / Pnoise2))
+
+# count peak to peak amplitude
+print(np.ptp(noise))
+print(np.ptp(y_pred2))
+
+
