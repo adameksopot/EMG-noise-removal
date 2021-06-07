@@ -140,11 +140,11 @@ def wavlet_transform(Y, wavelet, level):
     # wavelet="db4"
     # level=2
 
-    # calculate the wavelet coefficients
+    # calculating the wavelet coefficients
     coeff = pywt.wavedec(signal_emg, wavelet, mode="per")
     # levels  = floor(log2(signal_emg.shape[0]))
 
-    # calculate a threshold
+
     sigma = mad(coeff[-level])
 
     uthresh = sigma * np.sqrt(2 * np.log(len(signal_emg)))
@@ -152,7 +152,7 @@ def wavlet_transform(Y, wavelet, level):
 
     coeff[1:] = (pywt.threshold(i, value=uthresh, mode="soft") for i in coeff[1:])
 
-    # reconstruct the signal using the thresholded coefficients
+    #reconstructing signal with the thresholded coefficients
     y_denoised = pywt.waverec(coeff, wavelet, mode="per")
 
     f, ax = plt.subplots(figsize=(20, 10))
@@ -160,10 +160,11 @@ def wavlet_transform(Y, wavelet, level):
     plt.plot(data["emg"].values, color="g", alpha=0.5)
     plt.plot(y_denoised, color="r")
     ax.set_xlim((0, len(y_denoised)))
+    ax.legend(['Signal with gaussian noise', 'Orignal signal', 'Denoised signal'])
     return y_denoised
 
 
-Y_denoised_WT = wavlet_transform(Y, "db4", 2)
+Y_denoised_WT = wavlet_transform(Y, "db4", 3)
 Y_denoised2_WT = wavlet_transform(YwithNoise, "db4", 2)
 
 noiseWT = Y - Y_denoised_WT
