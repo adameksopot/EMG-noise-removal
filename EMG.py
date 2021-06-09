@@ -141,19 +141,19 @@ def wavlet_transform(Y, wavelet, level):
     # level=2
 
     # calculating the wavelet coefficients
-    coeff = pywt.wavedec(signal_emg, wavelet, mode="per")
+    coefficients = pywt.wavedec(signal_emg, wavelet, mode="per")
     # levels  = floor(log2(signal_emg.shape[0]))
 
 
-    sigma = mad(coeff[-level])
+    sigma = mad(coefficients[-level])
 
-    uthresh = sigma * np.sqrt(2 * np.log(len(signal_emg)))
-    # print(uthresh)
+    thresh = sigma * np.sqrt(2 * np.log(len(signal_emg)))
+    # print(thresh)
 
-    coeff[1:] = (pywt.threshold(i, value=uthresh, mode="soft") for i in coeff[1:])
+    coefficients[1:] = (pywt.threshold(i, value=thresh, mode="soft") for i in coefficients[1:])
 
     #reconstructing signal with the thresholded coefficients
-    y_denoised = pywt.waverec(coeff, wavelet, mode="per")
+    y_denoised = pywt.waverec(coefficients, wavelet, mode="per")
 
     f, ax = plt.subplots(figsize=(20, 10))
     plt.plot(signal_emg, color="b", alpha=0.5)
